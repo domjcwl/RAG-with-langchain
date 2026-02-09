@@ -136,23 +136,31 @@ function deleteSession(id) {
    Messaging
 -------------------- */
 
-sendBtn.addEventListener("click", () => {
+sendBtn.addEventListener("click", async () => {
   const text = userInput.value.trim();
   if (!text || !activeSessionId) return;
 
   const session = sessions[activeSessionId];
-
   session.messages.push({ sender: "user", text });
   addMessageToUI(text, "user");
-
   userInput.value = "";
 
-  // Fake bot reply (replace with backend call)
-  setTimeout(() => {
-    const reply = "This is a placeholder response 🤖";
-    session.messages.push({ sender: "bot", text: reply });
-    addMessageToUI(reply, "bot");
-  }, 600);
+  try {
+    const response = await fetch("http://localhost:8000/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: text,
+        session_id: activeSessionId,
+      }),
+    });
+    const data = await response.json();
+
+    session.messages.push({ sender: "bot", text: data.reply });
+    addMessageToUI(data.reply, "bot");
+  } catch (error) {
+    addMessageToUI("Error: Could not connect to backend.", "bot");
+  }
 });
 
 userInput.addEventListener("keydown", (e) => {
@@ -209,16 +217,31 @@ function renderFilePreview() {
   filePreview.appendChild(container);
 }
 
-function loadFileToDatabase(container) {
-  const status = document.createElement("div");
-  status.className = "file-status";
-  status.textContent = `${selectedFile.name} has been loaded to database`;
+async function loadFileToDatabase(container) {
+  const formData = new FormData();
+  formData.append("file", selectedFile);
 
-  // Prevent double-loading UI
-  container.querySelector(".load-btn").disabled = true;
-  container.querySelector(".load-btn").textContent = "Loaded";
+  const loadBtn = container.querySelector(".load-btn");
+  loadBtn.disabled = true;
+  loadBtn.textContent = "Uploading...";
 
-  container.appendChild(status);
+  try {
+    const response = await fetch("http://localhost:8000/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (response.ok) {
+      const status = document.createElement("div");
+      status.className = "file-status";
+      status.textContent = `${selectedFile.name} has been indexed.`;
+      loadBtn.textContent = "Loaded";
+      container.appendChild(status);
+    }
+  } catch (error) {
+    loadBtn.disabled = false;
+    loadBtn.textContent = "Error Loading";
+  }
 }
 
 function removeFile() {
