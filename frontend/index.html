@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Chatbot</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Inter font (ChatGPT-like) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <!-- Sidebar / Drawer -->
+      <aside class="sidebar">
+        <div class="sidebar-header"><h2>Chatbot</h2></div>
+        <!-- Sessions -->
+        <div class="sessions-header">
+          <span>Sessions</span> <button id="new-session-btn">＋</button>
+        </div>
+        <div class="sessions" id="sessions"></div>
+        <!-- File upload -->
+
+        <div class="upload">
+          <label for="file-input" class="upload-btn">➕ Upload file</label>
+          <input type="file" id="file-input" hidden />
+
+          <div class="file-preview" id="file-preview"></div>
+        </div>
+      </aside>
+      <!-- Main chat area -->
+      <main class="chat">
+        <div class="messages" id="messages">
+          <div class="message bot">Hello 👋 How can I help you today?</div>
+        </div>
+        <!-- Input area -->
+        <div class="input-area">
+          <input type="text" id="user-input" placeholder="Send a message..." />
+          <button id="send-btn">➤</button>
+        </div>
+      </main>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>

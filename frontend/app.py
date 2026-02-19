@@ -46,10 +46,14 @@ with st.sidebar:
                 if response.status_code == 200:
                     # 1. Update the active document name
                     st.session_state.active_doc = uploaded_file.name
+                    
+                    # --- ADD THIS LINE TO CLEAR MESSAGES ---
+                    st.session_state.messages = [] 
+                    
                     # 2. Increment key to "reset" the file_uploader widget
                     st.session_state.uploader_key += 1
-                    st.success("Document indexed!")
-                    st.rerun() # Refresh to update the UI immediately
+                    st.success("Document indexed and chat cleared!")
+                    st.rerun() 
                 else:
                     st.error("Upload failed.")
         else:
